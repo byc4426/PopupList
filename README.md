@@ -1,7 +1,7 @@
 # PopupList
 气泡式上下文菜单，用于列表长按弹出的横向气泡式菜单列表
-![baidu](http://img.blog.csdn.net/20151209235806657) 
-![baidu](http://img.blog.csdn.net/20151209235749053) 
+![效果图](http://img.blog.csdn.net/20151209235806657) 
+![效果图](http://img.blog.csdn.net/20151209235749053) 
 #使用方式
     只需要调用该方法即可完成绑定：
     PopupList.getInstance().initPopupList(上下文，ListView实例，要弹出的菜单项列表，实现了菜单点击事件接口的类实例);

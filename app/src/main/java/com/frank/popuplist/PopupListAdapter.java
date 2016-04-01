@@ -21,12 +21,25 @@ public class PopupListAdapter extends RecyclerView.Adapter<PopupListAdapter.View
 
     private List<String> mDatas;
     private OnPopupListClickListener onPopupListClickListener;
-    //弹出菜单的上下文，即要弹出菜单的列表项
+
+    /**
+     * 弹出菜单的上下文View，即要弹出菜单的那个列表项
+     */
     private View contextView;
-    //点击的上下文列表项位置
+
+    /**
+     * 点击的上下文列表项位置
+     */
     private int contextPosition;
 
-    //为每个数据项提供视图引用
+    /**
+     * PopupWindow管理类PopupList实例
+     */
+    private PopupList popupList;
+
+    /**
+     * 为每个数据项提供视图引用
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
 
@@ -35,12 +48,23 @@ public class PopupListAdapter extends RecyclerView.Adapter<PopupListAdapter.View
         }
     }
 
-    //根据数据集的类型书写合适的构造器
-    public PopupListAdapter(List<String> mDatas) {
+    /**
+     * 根据数据集的类型书写合适的构造器
+     *
+     * @param mDatas 数据集
+     */
+    public PopupListAdapter(PopupList popupList, List<String> mDatas) {
+        this.popupList = popupList;
         this.mDatas = mDatas;
     }
 
-    //创建新的view - 由LayoutManager布局管理器调用
+    /**
+     * 创建新的view - 由LayoutManager布局管理器调用
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public PopupListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -63,6 +87,7 @@ public class PopupListAdapter extends RecyclerView.Adapter<PopupListAdapter.View
                 @Override
                 public void onClick(View v) {
                     onPopupListClickListener.onPopupListItemClick(contextView, contextPosition, holder.itemView, position);
+                    popupList.hiddenPopupWindow();
                 }
             });
 

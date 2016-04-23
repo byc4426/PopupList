@@ -17,7 +17,7 @@
     lv_main.setAdapter(mDataAdapter);
     
     List<String> popupMenuItemList = new ArrayList<>();
-    popupMenuItemList.add("复制");
+    popupMenuItemList.add("转发");
     popupMenuItemList.add("删除");
     
     PopupList.getInstance().initPopupList(this, lv_main, popupMenuItemList, new PopupListAdapter.OnPopupListClickListener() {

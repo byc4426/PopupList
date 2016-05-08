@@ -14,7 +14,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 
 import java.util.List;
@@ -24,12 +23,13 @@ import java.util.List;
  */
 public class PopupList implements View.OnTouchListener {
 
-    private static final int itemViewWidth = 50;//dp
-    private static final int itemViewHeight = 40;//dp
-    private static final int dividerWidth = 1;//dp
-    private static final int arrowWidth = 15;//dp
-    private static final int arrowHeight = 7;//dp
-    private static final int windowCornersRadius = 8;//dp
+    private static final int ITEM_VIEW_WIDTH = 50;//dp,菜单项View的宽
+    private static final int ITEM_VIEW_HEIGHT = 40;//dp，菜单项View的高
+    private static final int DIVIDER_SIZE = 1;//dp，分割线的宽度
+    private static final int DIVIDER_COLOR = 0xFF444444;// 分割线的颜色
+    private static final int ARROW_WIDTH = 15;//dp，箭头指示器的宽
+    private static final int ARROW_HEIGHT = 7;//dp，箭头指示器的高
+    private static final int WINDOW_CORNERS_RADIUS = 8;//dp，弹出的窗口圆角大小
 
     private volatile static PopupList instance;
 
@@ -96,32 +96,32 @@ public class PopupList implements View.OnTouchListener {
         popupListAdapter.setOnPopupListClickListener(this.onPopupListClickListener);
         recyclerView.setAdapter(popupListAdapter);
         //设置列表分割线
-        recyclerView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.HORIZONTAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.HORIZONTAL, DIVIDER_SIZE, DIVIDER_COLOR));
         //计算出弹出窗口的宽高
-        int PopupWindowWidth = recyclerView.getAdapter().getItemCount() * ScreenUtils.dp2px(itemViewWidth) +
-                (recyclerView.getAdapter().getItemCount() - 1) * ScreenUtils.dp2px(dividerWidth);
-        int PopupWindowHeight = ScreenUtils.dp2px(itemViewHeight + arrowHeight);
+        int PopupWindowWidth = recyclerView.getAdapter().getItemCount() * ScreenUtils.dp2px(ITEM_VIEW_WIDTH) +
+                (recyclerView.getAdapter().getItemCount() - 1) * ScreenUtils.dp2px(DIVIDER_SIZE);
+        int PopupWindowHeight = ScreenUtils.dp2px(ITEM_VIEW_HEIGHT + ARROW_HEIGHT);
         //为水平列表添加指示箭头，默认在列表的左下角，根据手指按下位置绝对坐标进行位置调整
         ImageView iv = new ImageView(mContext);
         iv.setImageResource(R.drawable.popup_arrow);
         float leftEdgeOffset = rawX;
         float rightEdgeOffset = ScreenUtils.getScreenWidth(mContext) - rawX;
         if (leftEdgeOffset < PopupWindowWidth / 2) {
-            if (leftEdgeOffset < ScreenUtils.dp2px(arrowWidth / 2.0f)) {
-                iv.setTranslationX(ScreenUtils.dp2px(windowCornersRadius));
+            if (leftEdgeOffset < ScreenUtils.dp2px(ARROW_WIDTH / 2.0f)) {
+                iv.setTranslationX(ScreenUtils.dp2px(WINDOW_CORNERS_RADIUS));
             } else {
-                iv.setTranslationX(leftEdgeOffset - ScreenUtils.dp2px(arrowWidth / 2.0f));
+                iv.setTranslationX(leftEdgeOffset - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f));
             }
         } else if (rightEdgeOffset < PopupWindowWidth / 2) {
-            if (rightEdgeOffset < ScreenUtils.dp2px(arrowWidth / 2.0f)) {
-                iv.setTranslationX(PopupWindowWidth - rightEdgeOffset - ScreenUtils.dp2px(arrowWidth / 2.0f)-ScreenUtils.dp2px(windowCornersRadius));
+            if (rightEdgeOffset < ScreenUtils.dp2px(ARROW_WIDTH / 2.0f)) {
+                iv.setTranslationX(PopupWindowWidth - rightEdgeOffset - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f)-ScreenUtils.dp2px(WINDOW_CORNERS_RADIUS));
             } else {
-                iv.setTranslationX(PopupWindowWidth - rightEdgeOffset - ScreenUtils.dp2px(arrowWidth / 2.0f));
+                iv.setTranslationX(PopupWindowWidth - rightEdgeOffset - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f));
             }
         } else {
-            iv.setTranslationX(PopupWindowWidth / 2 - ScreenUtils.dp2px(arrowWidth / 2.0f));
+            iv.setTranslationX(PopupWindowWidth / 2 - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f));
         }
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtils.dp2px(arrowWidth), ScreenUtils.dp2px(arrowHeight));
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtils.dp2px(ARROW_WIDTH), ScreenUtils.dp2px(ARROW_HEIGHT));
         layoutView.addView(iv, layoutParams);
         //实例化弹出窗口并显示
         popupListWindow = new PopupWindow(layoutView, PopupWindowWidth,

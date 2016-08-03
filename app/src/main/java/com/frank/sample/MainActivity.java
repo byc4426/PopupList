@@ -2,14 +2,12 @@ package com.frank.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.frank.popuplist.PopupList;
-import com.frank.popuplist.PopupListAdapter;
 import com.frank.popuplist.R;
 
 import java.util.ArrayList;
@@ -32,10 +30,12 @@ public class MainActivity extends AppCompatActivity {
 
         popupMenuItemList.add("复制");
         popupMenuItemList.add("删除");
-        PopupList.getInstance().initPopupList(this, lv_main, popupMenuItemList, new PopupListAdapter.OnPopupListClickListener() {
+        popupMenuItemList.add("更多...");
+        PopupList popupList = new PopupList();
+        popupList.init(this, lv_main, popupMenuItemList, new PopupList.OnPopupListClickListener() {
             @Override
-            public void onPopupListItemClick(View contextView, int contextPosition, View view, int position) {
-                Toast.makeText(MainActivity.this, "点击了第"+contextPosition+"个列表项的第"+position+"个菜单："+popupMenuItemList.get(position),
+            public void onPopupListClick(View contextView, int contextPosition, int position) {
+                Toast.makeText(MainActivity.this, "您点击了第"+contextPosition+"个列表项的第"+position+"个菜单："+popupMenuItemList.get(position),
                         Toast.LENGTH_LONG).show();
             }
         });

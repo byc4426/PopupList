@@ -2,184 +2,211 @@ package com.frank.popuplist;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import java.util.List;
 
-/**
- * 列表项的长按弹出菜单
- */
-public class PopupList implements View.OnTouchListener {
-
-    private static final int ITEM_VIEW_WIDTH = 50;//dp,菜单项View的宽
-    private static final int ITEM_VIEW_HEIGHT = 40;//dp，菜单项View的高
-    private static final int DIVIDER_SIZE = 1;//dp，分割线的宽度
-    private static final int DIVIDER_COLOR = 0xFF444444;// 分割线的颜色
-    private static final int ARROW_WIDTH = 15;//dp，箭头指示器的宽
-    private static final int ARROW_HEIGHT = 7;//dp，箭头指示器的高
-    private static final int WINDOW_CORNERS_RADIUS = 8;//dp，弹出的窗口圆角大小
-
-    private volatile static PopupList instance;
+public class PopupList {
 
     private Context mContext;
-    private PopupWindow popupListWindow;
-    PopupListAdapter.OnPopupListClickListener onPopupListClickListener;
-    float rawX;
-    float rawY;
+    private PopupWindow mPopupWindow;
+    private ViewGroup mPopupListContainer;
+    private ImageView mIndicator;
+    private float mRawX;
+    private float mRawY;
+    private View mAnchorView;
+    private View mContextView;
+    private int mContextPosition;
+    private List<String> mPopupItemList;
+    private OnPopupListClickListener mOnPopupListClickListener;
+    private int mPopupListContainerWidth;
+    private int mIndicatorWidth;
+    private int mIndicatorHeight;
+    private int mPopupWindowHeight;
+    private int mScreenWidth;
+    private int mScreenHeight;
 
-    public static PopupList getInstance() {
-        if (instance == null) {
-            synchronized (PopupList.class) {
-                if (instance == null) {
-                    instance = new PopupList();
-                }
-            }
-        }
-        return instance;
+    public PopupList() {
     }
 
-    private PopupList() {
-
-    }
-
-    public PopupListAdapter.OnPopupListClickListener getOnPopupListClickListener() {
-        return onPopupListClickListener;
-    }
-
-    public void setOnPopupListClickListener(PopupListAdapter.OnPopupListClickListener onPopupListClickListener) {
-        this.onPopupListClickListener = onPopupListClickListener;
-    }
-
-    /**
-     * 在手指按下的位置显示弹出菜单
-     *
-     * @param context   上下文，一般为Activity
-     * @param parent    上下文view，同时也是用来寻找窗口token的view，一般为ListView中的列表项ItemView
-     * @param position  点击的列表项在列表数据集中的位置
-     * @param popupList 要显示的列表
-     * @param rawX      手指按下的屏幕绝对坐标X
-     * @param rawY      手指按下的屏幕绝对坐标Y
-     */
-    public void showPopupWindow(final Context context, View parent, int position, List popupList, float rawX, float rawY) {
+    public void init(Context context, View anchorView, List<String> popupItemList, OnPopupListClickListener onPopupListClickListener) {
         this.mContext = context;
-        //预防性Bug修复，详见http://blog.csdn.net/shangmingchao/article/details/50947418
-        if (mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
-            return;
-        }
-        // popupWindow要显示的内容
-        ViewGroup layoutView = (ViewGroup) LayoutInflater.from(mContext).inflate(
-                R.layout.popup_list, null);
-        RecyclerView recyclerView = (RecyclerView) layoutView.findViewById(R.id.rv_popup);
-        //如果item view内容的改变不会影响RecyclerView大小，设置成true以提升表现
-        //contentView.setHasFixedSize(true);
-        //设置布局管理器，LinearLayoutManager，水平线性布局
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        //设置适配器
-        PopupListAdapter popupListAdapter = new PopupListAdapter(this, popupList);
-        //设置item点击监听
-        popupListAdapter.setContextView(parent);
-        popupListAdapter.setContextPosition(position);
-        popupListAdapter.setOnPopupListClickListener(this.onPopupListClickListener);
-        recyclerView.setAdapter(popupListAdapter);
-        //设置列表分割线
-        recyclerView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.HORIZONTAL, DIVIDER_SIZE, DIVIDER_COLOR));
-        //计算出弹出窗口的宽高
-        int PopupWindowWidth = recyclerView.getAdapter().getItemCount() * ScreenUtils.dp2px(ITEM_VIEW_WIDTH) +
-                (recyclerView.getAdapter().getItemCount() - 1) * ScreenUtils.dp2px(DIVIDER_SIZE);
-        int PopupWindowHeight = ScreenUtils.dp2px(ITEM_VIEW_HEIGHT + ARROW_HEIGHT);
-        //为水平列表添加指示箭头，默认在列表的左下角，根据手指按下位置绝对坐标进行位置调整
-        ImageView iv = new ImageView(mContext);
-        iv.setImageResource(R.drawable.popup_arrow);
-        float leftEdgeOffset = rawX;
-        float rightEdgeOffset = ScreenUtils.getScreenWidth(mContext) - rawX;
-        if (leftEdgeOffset < PopupWindowWidth / 2) {
-            if (leftEdgeOffset < ScreenUtils.dp2px(ARROW_WIDTH / 2.0f)) {
-                iv.setTranslationX(ScreenUtils.dp2px(WINDOW_CORNERS_RADIUS));
-            } else {
-                iv.setTranslationX(leftEdgeOffset - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f));
-            }
-        } else if (rightEdgeOffset < PopupWindowWidth / 2) {
-            if (rightEdgeOffset < ScreenUtils.dp2px(ARROW_WIDTH / 2.0f)) {
-                iv.setTranslationX(PopupWindowWidth - rightEdgeOffset - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f)-ScreenUtils.dp2px(WINDOW_CORNERS_RADIUS));
-            } else {
-                iv.setTranslationX(PopupWindowWidth - rightEdgeOffset - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f));
-            }
-        } else {
-            iv.setTranslationX(PopupWindowWidth / 2 - ScreenUtils.dp2px(ARROW_WIDTH / 2.0f));
-        }
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtils.dp2px(ARROW_WIDTH), ScreenUtils.dp2px(ARROW_HEIGHT));
-        layoutView.addView(iv, layoutParams);
-        //实例化弹出窗口并显示
-        popupListWindow = new PopupWindow(layoutView, PopupWindowWidth,
-                PopupWindowHeight, true);
-        popupListWindow.setTouchable(true);
-        //设置背景以便在外面包裹一层可监听触屏等事件的容器
-        popupListWindow.setBackgroundDrawable(new BitmapDrawable());
-        //确保可以显示后，进行最终的显示
-        popupListWindow.showAtLocation(parent, Gravity.CENTER,
-                (int) rawX - ScreenUtils.getScreenWidth(mContext) / 2,
-                (int) rawY - ScreenUtils.getScreenHeight(mContext) / 2 - PopupWindowHeight / 2);
-    }
-
-    /**
-     * 隐藏气泡式弹出菜单PopupWindow
-     */
-    public void hiddenPopupWindow() {
-        //预防性Bug修复，详见http://blog.csdn.net/shangmingchao/article/details/50947418
-        if (mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
-            return;
-        }
-        if (popupListWindow != null) {
-            popupListWindow.dismiss();
-        }
-    }
-
-    public PopupWindow getPopupListWindow() {
-        return popupListWindow;
-    }
-
-    /**
-     * 给ListView绑定长按弹出(在手指按下的位置)横向气泡式菜单
-     *
-     * @param context                  上下文，一般为Activity
-     * @param absListView                 要弹出菜单的ListView或GridView等
-     * @param popupMenuItemList        要弹出的菜单项列表
-     * @param popupListOnClickListener 弹出菜单的点击监听接口
-     */
-    public void initPopupList(final Context context, final AbsListView absListView, final List<String> popupMenuItemList, PopupListAdapter.OnPopupListClickListener popupListOnClickListener) {
-        if (absListView == null || popupMenuItemList == null || popupMenuItemList.isEmpty()) {
-            return;
-        }
-        absListView.setOnTouchListener(this);
-        absListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        this.mAnchorView = anchorView;
+        this.mPopupItemList = popupItemList;
+        this.mOnPopupListClickListener = onPopupListClickListener;
+        mAnchorView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                showPopupWindow(context, view, position, popupMenuItemList, rawX, rawY);
-                return true;
+            public boolean onTouch(View v, MotionEvent event) {
+                mRawX = event.getRawX();
+                mRawY = event.getRawY();
+                return false;
             }
         });
-        setOnPopupListClickListener(popupListOnClickListener);
+        if (mAnchorView instanceof AbsListView) {
+            ((AbsListView) mAnchorView).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    mContextView = view;
+                    mContextPosition = position;
+                    showPopupListWindow();
+                    return true;
+                }
+            });
+        } else {
+            mAnchorView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mContextView = v;
+                    showPopupListWindow();
+                }
+            });
+        }
+        if (mScreenWidth == 0) {
+            mScreenWidth = getScreenWidth();
+        }
+        if (mScreenHeight == 0) {
+            mScreenHeight = getScreenHeight();
+        }
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        rawX = event.getRawX();
-        rawY = event.getRawY();
-        return false;
+    private void showPopupListWindow() {
+        if (mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
+            return;
+        }
+        if (mPopupWindow == null) {
+            View contentView = LayoutInflater.from(mContext).inflate(R.layout.popuplist_window, null);
+            mPopupListContainer = (ViewGroup) contentView.findViewById(R.id.vg_popuplist_container);
+            mIndicator = (ImageView) contentView.findViewById(R.id.iv_indicator);
+            for (int i = 0; i < mPopupItemList.size(); i++) {
+                TextView textView = new TextView(mContext);
+                textView.setTextColor(Color.WHITE);
+                textView.setTextSize(16);
+                textView.setPadding(dp2px(7), dp2px(5), dp2px(7), dp2px(5));
+                textView.setClickable(true);
+                final int finalI = i;
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mOnPopupListClickListener != null) {
+                            mOnPopupListClickListener.onPopupListClick(mContextView, mContextPosition, finalI);
+                            hidePopupListWindow();
+                        }
+                    }
+                });
+                textView.setText(mPopupItemList.get(i));
+                if (mPopupItemList.size() > 1 && i == 0) {
+                    textView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.popuplist_left_item_bg));
+                } else if (mPopupItemList.size() > 1 && i == mPopupItemList.size() - 1) {
+                    textView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.popuplist_right_item_bg));
+                } else if (mPopupItemList.size() == 1) {
+                    textView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.popuplist_corner_item_bg));
+                } else {
+                    textView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.popuplist_center_item_bg));
+                }
+                mPopupListContainer.addView(textView);
+                if (mPopupItemList.size() > 1 && i != mPopupItemList.size() - 1) {
+                    View view = new View(mContext);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(1, dp2px(16));
+                    layoutParams.gravity = Gravity.CENTER;
+                    view.setLayoutParams(layoutParams);
+                    view.setBackgroundColor(Color.GRAY);
+                    mPopupListContainer.addView(view);
+                }
+            }
+            if (mPopupListContainerWidth == 0) {
+                mPopupListContainerWidth = getViewWidth(mPopupListContainer);
+            }
+            if (mIndicatorWidth == 0) {
+                mIndicatorWidth = mIndicator.getLayoutParams().width;
+            }
+            if (mIndicatorHeight == 0) {
+                mIndicatorHeight = mIndicator.getLayoutParams().height;
+            }
+            if (mPopupWindowHeight == 0) {
+                mPopupWindowHeight = getViewHeight(mPopupListContainer) + mIndicatorHeight;
+            }
+            mPopupWindow = new PopupWindow(contentView, mPopupListContainerWidth, mPopupWindowHeight, true);
+            mPopupWindow.setTouchable(true);
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+        }
+        float leftEdgeOffset = mRawX;
+        float rightEdgeOffset = mScreenWidth - mRawX;
+        if (leftEdgeOffset < mPopupListContainerWidth / 2) {
+            if (leftEdgeOffset < mIndicatorWidth / 2.0f) {
+                mIndicator.setTranslationX(dp2px(8));
+            } else {
+                mIndicator.setTranslationX(leftEdgeOffset - mIndicatorWidth / 2.0f);
+            }
+        } else if (rightEdgeOffset < mPopupListContainerWidth / 2) {
+            if (rightEdgeOffset < mIndicatorWidth / 2.0f) {
+                mIndicator.setTranslationX(mPopupListContainerWidth - rightEdgeOffset - mIndicatorWidth / 2.0f - dp2px(8));
+            } else {
+                mIndicator.setTranslationX(mPopupListContainerWidth - rightEdgeOffset - mIndicatorWidth / 2.0f);
+            }
+        } else {
+            mIndicator.setTranslationX(mPopupListContainerWidth / 2 - mIndicatorWidth / 2.0f);
+        }
+        mPopupWindow.showAtLocation(mAnchorView, Gravity.CENTER,
+                (int) mRawX - mScreenWidth / 2,
+                (int) mRawY - mScreenHeight / 2 - mPopupWindowHeight + mIndicatorHeight);
+    }
+
+    private int dp2px(float value) {
+        final float scale = mContext.getResources().getDisplayMetrics().densityDpi;
+        return (int) (value * (scale / 160) + 0.5f);
+    }
+
+    private int getScreenWidth() {
+        WindowManager wm = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.widthPixels;
+    }
+
+    private int getScreenHeight() {
+        WindowManager wm = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.heightPixels;
+    }
+
+    private int getViewWidth(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        return view.getMeasuredWidth();
+    }
+
+    private int getViewHeight(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        return view.getMeasuredHeight();
+    }
+
+    public void hidePopupListWindow() {
+        if (mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
+            return;
+        }
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+    }
+
+    public interface OnPopupListClickListener {
+        void onPopupListClick(View contextView, int contextPosition, int position);
     }
 
 }

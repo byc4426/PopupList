@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,25 +29,32 @@ public class MainActivity extends AppCompatActivity {
         mDataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, mDataList);
         lv_main.setAdapter(mDataAdapter);
 
-        popupMenuItemList.add("复制");
-        popupMenuItemList.add("删除");
-        popupMenuItemList.add("更多...");
+        popupMenuItemList.add(getString(R.string.copy));
+        popupMenuItemList.add(getString(R.string.delete));
+        popupMenuItemList.add(getString(R.string.share));
+        popupMenuItemList.add(getString(R.string.more));
         PopupList popupList = new PopupList();
         popupList.init(this, lv_main, popupMenuItemList, new PopupList.OnPopupListClickListener() {
             @Override
             public void onPopupListClick(View contextView, int contextPosition, int position) {
-                Toast.makeText(MainActivity.this, "您点击了第"+contextPosition+"个列表项的第"+position+"个菜单："+popupMenuItemList.get(position),
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, contextPosition + "," + position, Toast.LENGTH_LONG).show();
             }
         });
+        ImageView indicator = new ImageView(this);
+        indicator.setImageResource(R.drawable.popuplist_default_arrow);
+        popupList.setIndicatorView(indicator);
+        popupList.setIndicatorSize(dp2px(16), dp2px(8));
         getData();
     }
 
-
+    private int dp2px(float value) {
+        final float scale = this.getResources().getDisplayMetrics().densityDpi;
+        return (int) (value * (scale / 160) + 0.5f);
+    }
 
     private void getData() {
         for (int i = 0; i < 40; i++) {
-            mDataList.add("我是第"+i+"个列表项");
+            mDataList.add("No." + i);
         }
         mDataAdapter.notifyDataSetChanged();
     }

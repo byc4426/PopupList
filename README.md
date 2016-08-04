@@ -2,16 +2,16 @@
 气泡式上下文菜单，用于列表长按弹出的横向气泡式菜单列表。
 在手指按下的位置弹出气泡框，触摸气泡外部或点击列表项可以隐藏。
 
-This utility class can add a horizontal popup-menu easily.
+This utility class can add a horizontal popup-menu easily.<br />
 该工具类可以很方便的为View、ListView/GridView绑定长按弹出横向气泡菜单。
 
 **欢迎star，接受pull request。**
 
 ##效果图
-![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_1.png)![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_2.png)
+![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_1.png)![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_2.png)<br />
 ![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_3.png)![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_4.png)
 ##使用方式(How do I use PopupList?)
-Just need a `.java`file and one line code.
+Just need a `.java`file and one line code.<br />
 只需要一个Java文件和一行代码即可。
 
 ```java

@@ -5,8 +5,8 @@
 <p>This utility class can bind a horizontal popup-menu for ListView, GridView, or other View easily.<br />
 该工具类可以很方便的为ListView, GridView, 甚至普通View绑定长按弹出横向气泡式菜单。</p>
 
-<p>**Welcome star, fork**</p>
-<p>**欢迎star，fork**</p>
+**<p>Welcome star, fork</p>**
+**<p>欢迎star，fork</p>**
 
 ##效果图(Screenshot)
 ![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_1.png)![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_2.png)<br />
@@ -42,5 +42,5 @@ Just need a `.java`file and a little code.<br />
     popupList.setIndicatorSize(dp2px(16), dp2px(8));
 ```
 ##配置(Configuration)：
-<p>You can get more information from the [Wiki](https://github.com/shangmingchao/PopupList/wiki) page.</p>
-<p>可以在[Wiki](https://github.com/shangmingchao/PopupList/wiki)页了解更多</p>
+You can get more information from the [Wiki](https://github.com/shangmingchao/PopupList/wiki) page.<br />
+可以在[Wiki](https://github.com/shangmingchao/PopupList/wiki)页了解更多

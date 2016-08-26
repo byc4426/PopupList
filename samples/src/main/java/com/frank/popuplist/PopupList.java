@@ -116,7 +116,7 @@ public class PopupList {
         if (mScreenHeight == 0) {
             mScreenHeight = getScreenHeight();
         }
-        refreshBackgroundOrRadiusStateList(mPressedBackgroundColor, mNormalBackgroundColor, mBackgroundCornerRadiusPixel);
+        refreshBackgroundOrRadiusStateList();
         refreshTextColorStateList(mPressedTextColor, mNormalTextColor);
     }
 
@@ -168,7 +168,7 @@ public class PopupList {
                 } else if (mPopupItemList.size() == 1) {
                     textView.setBackgroundDrawable(mCornerItemBackground);
                 } else {
-                    textView.setBackgroundDrawable(mCenterItemBackground);
+                    textView.setBackgroundDrawable(getCenterItemBackground());
                 }
                 popupListContainer.addView(textView);
                 if (mPopupItemList.size() > 1 && i != mPopupItemList.size() - 1) {
@@ -228,69 +228,74 @@ public class PopupList {
                 (int) mRawY - mScreenHeight / 2 - mPopupWindowHeight + mIndicatorHeight);
     }
 
-    private void refreshBackgroundOrRadiusStateList(int pressedBackgroundColor, int normalBackgroundColor, int backgroundCornerRadiusPixel) {
+    private void refreshBackgroundOrRadiusStateList() {
         // left
         GradientDrawable leftItemPressedDrawable = new GradientDrawable();
-        leftItemPressedDrawable.setColor(pressedBackgroundColor);
+        leftItemPressedDrawable.setColor(mPressedBackgroundColor);
         leftItemPressedDrawable.setCornerRadii(new float[]{
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
                 0, 0,
                 0, 0,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel});
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel});
         GradientDrawable leftItemNormalDrawable = new GradientDrawable();
-        leftItemNormalDrawable.setColor(normalBackgroundColor);
+        leftItemNormalDrawable.setColor(mNormalBackgroundColor);
         leftItemNormalDrawable.setCornerRadii(new float[]{
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
                 0, 0,
                 0, 0,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel});
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel});
         mLeftItemBackground = new StateListDrawable();
         mLeftItemBackground.addState(new int[]{android.R.attr.state_pressed}, leftItemPressedDrawable);
         mLeftItemBackground.addState(new int[]{}, leftItemNormalDrawable);
         // center
-        GradientDrawable centerItemPressedDrawable = new GradientDrawable();
-        centerItemPressedDrawable.setColor(pressedBackgroundColor);
-        GradientDrawable centerItemNormalDrawable = new GradientDrawable();
-        centerItemNormalDrawable.setColor(normalBackgroundColor);
-        mCenterItemBackground = new StateListDrawable();
-        mCenterItemBackground.addState(new int[]{android.R.attr.state_pressed}, centerItemPressedDrawable);
-        mCenterItemBackground.addState(new int[]{}, centerItemNormalDrawable);
+        mCenterItemBackground = getCenterItemBackground();
         // right
         GradientDrawable rightItemPressedDrawable = new GradientDrawable();
-        rightItemPressedDrawable.setColor(pressedBackgroundColor);
+        rightItemPressedDrawable.setColor(mPressedBackgroundColor);
         rightItemPressedDrawable.setCornerRadii(new float[]{
                 0, 0,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
                 0, 0});
         GradientDrawable rightItemNormalDrawable = new GradientDrawable();
-        rightItemNormalDrawable.setColor(normalBackgroundColor);
+        rightItemNormalDrawable.setColor(mNormalBackgroundColor);
         rightItemNormalDrawable.setCornerRadii(new float[]{
                 0, 0,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
                 0, 0});
         mRightItemBackground = new StateListDrawable();
         mRightItemBackground.addState(new int[]{android.R.attr.state_pressed}, rightItemPressedDrawable);
         mRightItemBackground.addState(new int[]{}, rightItemNormalDrawable);
         // corner
         GradientDrawable cornerItemPressedDrawable = new GradientDrawable();
-        cornerItemPressedDrawable.setColor(pressedBackgroundColor);
+        cornerItemPressedDrawable.setColor(mPressedBackgroundColor);
         cornerItemPressedDrawable.setCornerRadii(new float[]{
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel});
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel});
         GradientDrawable cornerItemNormalDrawable = new GradientDrawable();
-        cornerItemNormalDrawable.setColor(normalBackgroundColor);
+        cornerItemNormalDrawable.setColor(mNormalBackgroundColor);
         cornerItemNormalDrawable.setCornerRadii(new float[]{
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel,
-                backgroundCornerRadiusPixel, backgroundCornerRadiusPixel});
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel,
+                mBackgroundCornerRadiusPixel, mBackgroundCornerRadiusPixel});
         mCornerItemBackground = new StateListDrawable();
         mCornerItemBackground.addState(new int[]{android.R.attr.state_pressed}, cornerItemPressedDrawable);
         mCornerItemBackground.addState(new int[]{}, cornerItemNormalDrawable);
+    }
+
+    private StateListDrawable getCenterItemBackground() {
+        StateListDrawable centerItemBackground = new StateListDrawable();
+        GradientDrawable centerItemPressedDrawable = new GradientDrawable();
+        centerItemPressedDrawable.setColor(mPressedBackgroundColor);
+        GradientDrawable centerItemNormalDrawable = new GradientDrawable();
+        centerItemNormalDrawable.setColor(mNormalBackgroundColor);
+        centerItemBackground.addState(new int[]{android.R.attr.state_pressed}, centerItemPressedDrawable);
+        centerItemBackground.addState(new int[]{}, centerItemNormalDrawable);
+        return centerItemBackground;
     }
 
     private void refreshTextColorStateList(int pressedTextColor, int normalTextColor) {
@@ -391,7 +396,7 @@ public class PopupList {
 
     public void setNormalBackgroundColor(int normalBackgroundColor) {
         this.mNormalBackgroundColor = normalBackgroundColor;
-        refreshBackgroundOrRadiusStateList(mPressedBackgroundColor, mNormalBackgroundColor, mBackgroundCornerRadiusPixel);
+        refreshBackgroundOrRadiusStateList();
     }
 
     public int getPressedBackgroundColor() {
@@ -400,7 +405,7 @@ public class PopupList {
 
     public void setPressedBackgroundColor(int pressedBackgroundColor) {
         this.mPressedBackgroundColor = pressedBackgroundColor;
-        refreshBackgroundOrRadiusStateList(mPressedBackgroundColor, mNormalBackgroundColor, mBackgroundCornerRadiusPixel);
+        refreshBackgroundOrRadiusStateList();
     }
 
     public int getBackgroundCornerRadiusPixel() {
@@ -409,7 +414,7 @@ public class PopupList {
 
     public void setBackgroundCornerRadiusPixel(int backgroundCornerRadiusPixel) {
         this.mBackgroundCornerRadiusPixel = backgroundCornerRadiusPixel;
-        refreshBackgroundOrRadiusStateList(mPressedBackgroundColor, mNormalBackgroundColor, mBackgroundCornerRadiusPixel);
+        refreshBackgroundOrRadiusStateList();
     }
 
     public int getDividerColor() {

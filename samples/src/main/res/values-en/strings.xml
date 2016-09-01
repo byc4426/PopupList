@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PopupList</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="share">Share</string>
+    <string name="more">More&#8230;</string>
+</resources>

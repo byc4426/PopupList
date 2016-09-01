@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -40,10 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, contextPosition + "," + position, Toast.LENGTH_LONG).show();
             }
         });
-        ImageView indicator = new ImageView(this);
-        indicator.setImageResource(R.drawable.popuplist_default_arrow);
-        popupList.setIndicatorView(indicator);
-        popupList.setIndicatorSize(dp2px(16), dp2px(8));
+        popupList.setIndicatorView(popupList.getDefaultIndicatorView(dp2px(16), dp2px(8), 0xFF444444));
         getData();
     }
 

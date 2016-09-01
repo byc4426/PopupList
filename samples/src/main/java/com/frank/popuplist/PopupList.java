@@ -3,8 +3,13 @@ package com.frank.popuplist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.util.DisplayMetrics;
@@ -15,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -29,13 +35,17 @@ public class PopupList {
 
     private static final int DEFAULT_NORMAL_TEXT_COLOR = Color.WHITE;
     private static final int DEFAULT_PRESSED_TEXT_COLOR = Color.WHITE;
-    private static final float DEFAULT_TEXT_SIZE_PIXEL = 30;
+    private static final float DEFAULT_TEXT_SIZE_PIXEL = 40;
+    private static final float DEFAULT_TEXT_PADDING_LEFT_PIXEL = 20;
+    private static final float DEFAULT_TEXT_PADDING_TOP_PIXEL = 16;
+    private static final float DEFAULT_TEXT_PADDING_RIGHT_PIXEL = 20;
+    private static final float DEFAULT_TEXT_PADDING_BOTTOM_PIXEL = 16;
     private static final int DEFAULT_NORMAL_BACKGROUND_COLOR = 0xFF444444;
     private static final int DEFAULT_PRESSED_BACKGROUND_COLOR = 0xFF777777;
     private static final int DEFAULT_BACKGROUND_RADIUS_PIXEL = 16;
     private static final int DEFAULT_DIVIDER_COLOR = 0xFF888888;
     private static final int DEFAULT_DIVIDER_WIDTH_PIXEL = 1;
-    private static final int DEFAULT_DIVIDER_HEIGHT_PIXEL = 20;
+    private static final int DEFAULT_DIVIDER_HEIGHT_PIXEL = 30;
 
     private Context mContext;
     private PopupWindow mPopupWindow;
@@ -48,7 +58,6 @@ public class PopupList {
     private float mRawX;
     private float mRawY;
     private StateListDrawable mLeftItemBackground;
-    private StateListDrawable mCenterItemBackground;
     private StateListDrawable mRightItemBackground;
     private StateListDrawable mCornerItemBackground;
     private ColorStateList mTextColorStateList;
@@ -61,6 +70,10 @@ public class PopupList {
     private int mNormalTextColor;
     private int mPressedTextColor;
     private float mTextSizePixel;
+    private float mTextPaddingLeftPixel;
+    private float mTextPaddingTopPixel;
+    private float mTextPaddingRightPixel;
+    private float mTextPaddingBottomPixel;
     private int mNormalBackgroundColor;
     private int mPressedBackgroundColor;
     private int mBackgroundCornerRadiusPixel;
@@ -72,6 +85,10 @@ public class PopupList {
         this.mNormalTextColor = DEFAULT_NORMAL_TEXT_COLOR;
         this.mPressedTextColor = DEFAULT_PRESSED_TEXT_COLOR;
         this.mTextSizePixel = DEFAULT_TEXT_SIZE_PIXEL;
+        this.mTextPaddingLeftPixel = DEFAULT_TEXT_PADDING_LEFT_PIXEL;
+        this.mTextPaddingTopPixel = DEFAULT_TEXT_PADDING_TOP_PIXEL;
+        this.mTextPaddingRightPixel = DEFAULT_TEXT_PADDING_RIGHT_PIXEL;
+        this.mTextPaddingBottomPixel = DEFAULT_TEXT_PADDING_BOTTOM_PIXEL;
         this.mNormalBackgroundColor = DEFAULT_NORMAL_BACKGROUND_COLOR;
         this.mPressedBackgroundColor = DEFAULT_PRESSED_BACKGROUND_COLOR;
         this.mBackgroundCornerRadiusPixel = DEFAULT_BACKGROUND_RADIUS_PIXEL;
@@ -208,6 +225,7 @@ public class PopupList {
             float marginLeftScreenEdge = mRawX;
             float marginRightScreenEdge = mScreenWidth - mRawX;
             if (marginLeftScreenEdge < mPopupWindowWidth / 2f) {
+                // in case of the draw of indicator out of Screen's bounds
                 if (marginLeftScreenEdge < mIndicatorWidth / 2f + mBackgroundCornerRadiusPixel) {
                     mIndicatorView.setTranslationX(mIndicatorWidth / 2f + mBackgroundCornerRadiusPixel - mPopupWindowWidth / 2f);
                 } else {
@@ -247,8 +265,6 @@ public class PopupList {
         mLeftItemBackground = new StateListDrawable();
         mLeftItemBackground.addState(new int[]{android.R.attr.state_pressed}, leftItemPressedDrawable);
         mLeftItemBackground.addState(new int[]{}, leftItemNormalDrawable);
-        // center
-        mCenterItemBackground = getCenterItemBackground();
         // right
         GradientDrawable rightItemPressedDrawable = new GradientDrawable();
         rightItemPressedDrawable.setColor(mPressedBackgroundColor);
@@ -350,6 +366,52 @@ public class PopupList {
         return mIndicatorView;
     }
 
+    public View getDefaultIndicatorView(final float widthPixel, final float heightPixel,
+                                        final int color) {
+        ImageView indicator = new ImageView(mContext);
+        Drawable drawable = new Drawable() {
+            @Override
+            public void draw(Canvas canvas) {
+                Path path = new Path();
+                Paint paint = new Paint();
+                paint.setColor(color);
+                paint.setStyle(Paint.Style.FILL);
+                path.moveTo(0f, 0f);
+                path.lineTo(widthPixel, 0f);
+                path.lineTo(widthPixel / 2, heightPixel);
+                path.close();
+                canvas.drawPath(path, paint);
+            }
+
+            @Override
+            public void setAlpha(int alpha) {
+
+            }
+
+            @Override
+            public void setColorFilter(ColorFilter colorFilter) {
+
+            }
+
+            @Override
+            public int getOpacity() {
+                return 0;
+            }
+
+            @Override
+            public int getIntrinsicWidth() {
+                return (int) widthPixel;
+            }
+
+            @Override
+            public int getIntrinsicHeight() {
+                return (int) heightPixel;
+            }
+        };
+        indicator.setImageDrawable(drawable);
+        return indicator;
+    }
+
     public void setIndicatorView(View indicatorView) {
         this.mIndicatorView = indicatorView;
     }
@@ -388,6 +450,38 @@ public class PopupList {
 
     public void setTextSizePixel(float textSizePixel) {
         this.mTextSizePixel = textSizePixel;
+    }
+
+    public float getTextPaddingLeftPixel() {
+        return mTextPaddingLeftPixel;
+    }
+
+    public void setTextPaddingLeftPixel(float textPaddingLeftPixel) {
+        this.mTextPaddingLeftPixel = textPaddingLeftPixel;
+    }
+
+    public float getTextPaddingTopPixel() {
+        return mTextPaddingTopPixel;
+    }
+
+    public void setTextPaddingTopPixel(float textPaddingTopPixel) {
+        this.mTextPaddingTopPixel = textPaddingTopPixel;
+    }
+
+    public float getTextPaddingRightPixel() {
+        return mTextPaddingRightPixel;
+    }
+
+    public void setTextPaddingRightPixel(float textPaddingRightPixel) {
+        this.mTextPaddingRightPixel = textPaddingRightPixel;
+    }
+
+    public float getTextPaddingBottomPixel() {
+        return mTextPaddingBottomPixel;
+    }
+
+    public void setTextPaddingBottomPixel(float textPaddingBottomPixel) {
+        this.mTextPaddingBottomPixel = textPaddingBottomPixel;
     }
 
     public int getNormalBackgroundColor() {

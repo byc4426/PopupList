@@ -1,12 +1,12 @@
 # PopupList
 <p>It can pop a horizontal popup menu when you press a View by a long-press guesture.<br />
-长按ListView, GridView 甚至View, 弹出横向气泡式菜单。</p>
+长按ListView, GridView 或普通View, 弹出横向气泡式菜单。</p>
 
 <p>This utility class can bind a horizontal popup-menu for ListView, GridView, or other View easily.<br />
 该工具类可以很方便的为ListView, GridView, 甚至普通View绑定长按弹出横向气泡式菜单。</p>
 
 **<p>Welcome star, fork</p>**
-**<p>欢迎star，fork</p>**
+**<p>欢迎右上角star，fork</p>**
 
 ##效果图(Screenshot)
 ![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_1.png)![ScreenShot](https://github.com/shangmingchao/PopupList/blob/master/screenshots/screenshot_2.png)<br />
@@ -36,10 +36,7 @@ Just need a `.java`file and a little code.<br />
             Toast.makeText(MainActivity.this, contextPosition + "," + position, Toast.LENGTH_LONG).show();
         }
     });
-    ImageView indicator = new ImageView(this);
-    indicator.setImageResource(R.drawable.popuplist_default_arrow);
-    popupList.setIndicatorView(indicator);
-    popupList.setIndicatorSize(dp2px(16), dp2px(8));
+    popupList.setIndicatorView(popupList.getDefaultIndicatorView(dp2px(16), dp2px(8), 0xFF444444));
 ```
 ##配置(Configuration)：
 You can get more information from the [Wiki](https://github.com/shangmingchao/PopupList/wiki) page.<br />

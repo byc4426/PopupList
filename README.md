@@ -29,10 +29,10 @@ Just need a `.java`file and a little code.<br />
             Toast.makeText(MainActivity.this, contextPosition + "," + position, Toast.LENGTH_LONG).show();
         }
     });
-    popupList.setTextSizePixel(popupList.sp2px(12));
+    popupList.setTextSize(popupList.sp2px(12));
     popupList.setTextPadding(popupList.dp2px(10), popupList.dp2px(5), popupList.dp2px(10), popupList.dp2px(5));
     popupList.setIndicatorView(popupList.getDefaultIndicatorView(popupList.dp2px(16), popupList.dp2px(8), 0xFF444444));
 ```
 ##配置(Configuration)：
-You can get more information from the [Wiki](https://github.com/shangmingchao/PopupList/wiki) page.<br />
-可以在[Wiki](https://github.com/shangmingchao/PopupList/wiki)页了解更多
+You can get more information from the [Wiki](https://github.com/shangmingchao/PopupList/wiki/Configuration) page.<br />
+可以在[Wiki](https://github.com/shangmingchao/PopupList/wiki/%E8%AF%A6%E7%BB%86%E9%85%8D%E7%BD%AE)页了解更多

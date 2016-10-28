@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, contextPosition + "," + position, Toast.LENGTH_LONG).show();
             }
         });
-        popupList.setTextSizePixel(popupList.sp2px(12));
+        popupList.setTextSize(popupList.sp2px(12));
         popupList.setTextPadding(popupList.dp2px(10), popupList.dp2px(5), popupList.dp2px(10), popupList.dp2px(5));
         popupList.setIndicatorView(popupList.getDefaultIndicatorView(popupList.dp2px(16), popupList.dp2px(8), 0xFF444444));
         getData();

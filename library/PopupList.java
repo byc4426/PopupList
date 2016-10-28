@@ -83,6 +83,15 @@ public class PopupList {
     private int mDividerWidth;
     private int mDividerHeight;
 
+    /**
+     * {@link PopupList#init(Context, View, List, OnPopupListClickListener)} method make PopList restored
+     * to the default style and rebind event. so other set() method should be invoked after that method.
+     *
+     * @param context                  the activity
+     * @param anchorView               the view on which to pin the popup window
+     * @param popupItemList            the list of the popup menu
+     * @param onPopupListClickListener the Listener
+     */
     public void init(Context context, View anchorView, List<String> popupItemList, OnPopupListClickListener onPopupListClickListener) {
         this.mNormalTextColor = DEFAULT_NORMAL_TEXT_COLOR;
         this.mPressedTextColor = DEFAULT_PRESSED_TEXT_COLOR;
@@ -415,11 +424,11 @@ public class PopupList {
         refreshTextColorStateList(mPressedTextColor, mNormalTextColor);
     }
 
-    public float getTextSizePixel() {
+    public float getTextSize() {
         return mTextSize;
     }
 
-    public void setTextSizePixel(float textSizePixel) {
+    public void setTextSize(float textSizePixel) {
         this.mTextSize = textSizePixel;
     }
 
@@ -486,11 +495,11 @@ public class PopupList {
         refreshBackgroundOrRadiusStateList();
     }
 
-    public int getBackgroundCornerRadiusPixel() {
+    public int getBackgroundCornerRadius() {
         return mBackgroundCornerRadius;
     }
 
-    public void setBackgroundCornerRadiusPixel(int backgroundCornerRadiusPixel) {
+    public void setBackgroundCornerRadius(int backgroundCornerRadiusPixel) {
         this.mBackgroundCornerRadius = backgroundCornerRadiusPixel;
         refreshBackgroundOrRadiusStateList();
     }
@@ -503,19 +512,19 @@ public class PopupList {
         this.mDividerColor = dividerColor;
     }
 
-    public int getDividerWidthPixel() {
+    public int getDividerWidth() {
         return mDividerWidth;
     }
 
-    public void setDividerWidthPixel(int dividerWidthPixel) {
+    public void setDividerWidth(int dividerWidthPixel) {
         this.mDividerWidth = dividerWidthPixel;
     }
 
-    public int getDividerHeightPixel() {
+    public int getDividerHeight() {
         return mDividerHeight;
     }
 
-    public void setDividerHeightPixel(int dividerHeightPixel) {
+    public void setDividerHeight(int dividerHeightPixel) {
         this.mDividerHeight = dividerHeightPixel;
     }
 

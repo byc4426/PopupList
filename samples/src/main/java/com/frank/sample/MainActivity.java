@@ -39,13 +39,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, contextPosition + "," + position, Toast.LENGTH_LONG).show();
             }
         });
-        popupList.setIndicatorView(popupList.getDefaultIndicatorView(dp2px(16), dp2px(8), 0xFF444444));
+        popupList.setTextSizePixel(popupList.sp2px(12));
+        popupList.setTextPadding(popupList.dp2px(10), popupList.dp2px(5), popupList.dp2px(10), popupList.dp2px(5));
+        popupList.setIndicatorView(popupList.getDefaultIndicatorView(popupList.dp2px(16), popupList.dp2px(8), 0xFF444444));
         getData();
-    }
-
-    private int dp2px(float value) {
-        final float scale = this.getResources().getDisplayMetrics().densityDpi;
-        return (int) (value * (scale / 160) + 0.5f);
     }
 
     private void getData() {

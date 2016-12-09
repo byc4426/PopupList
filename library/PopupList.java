@@ -130,11 +130,13 @@ public class PopupList {
                 }
             });
         } else {
-            mAnchorView.setOnClickListener(new View.OnClickListener() {
+            mAnchorView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View v) {
                     mContextView = v;
+                    mContextPosition = 0;
                     showPopupListWindow();
+                    return true;
                 }
             });
         }
